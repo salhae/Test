@@ -1,0 +1,93 @@
+---
+title: "Ebola in Guinea, Sierra Leone, Senegal"
+author: "Salome Hauselmann"
+date: today
+format: 
+  html:
+    toc: true
+    toc-location: body
+    code.fild: show
+    code-tools: true
+    df-print: paged
+    embeded-resources: true
+
+  pdf: 
+    toc: true
+  docx: 
+    toc: true
+---
+
+```{r}
+#| output: false
+#| echo: false
+# Load libraries
+library(here)
+library(tidyverse)
+library(lubridate)
+library(unibeCols)
+```
+
+## Introduction
+
+The aim of this document is to describe the increase in Ebola cases and deaths in Guinea, Sierra Leone, and Senegal in 2014 and 2015.
+
+## Data
+
+We read and process the data of Ebola cases and deaths in Guinea, Sierra Leone, and Senegal as reported by the [Projects in R Course GitHub repository](https://github.com/ISPMBern/projects-in-R).
+
+```{r}
+#| output: false
+#| echo: false
+# Read data
+ebola <- read_csv(here("data/raw/ebola.csv"))
+data_ebola_cum_cases <- ebola %>% 
+  select(date = Date, country = Country, Cum_conf_cases = Cum_conf_cases, Cum_conf_death = Cum_conf_death) %>% 
+  filter(date <= ymd("2015-12-29") & 
+        (country == "Guinea" | country ==  "Sierra Leone" | country == "Senegal"))
+```
+
+@fig-cases1 shows the number of Confirmed Cases of Ebola in Guinea, Sierra Leone and Senegal from 2014 to 2015.
+
+```{r}
+#| label: fig-cases1
+#| fig-cap: "Confirmed Cases of Ebola in Guinea, Sierra Leone and Senegal."
+#| fig_width: 8
+#| fig_height: 4
+ggplot(data = data_ebola_cum_cases, 
+               mapping = aes(x = date, y = Cum_conf_cases, colour = country)) + 
+  geom_line(mapping = aes(group = country), 
+            alpha = 0.7, linetype = "dashed", linewidth = 1.5) +
+  scale_colour_manual(name = "Country",
+                      breaks = c("Guinea", "Sierra Leone", "Senegal"),
+                      values = c(unibeRedS()[1], unibeOceanS()[1], unibeMustardS()[1]),
+                      labels = c("GIN", "SLE", "SEN" )) +
+  ggtitle(label = "Confirmed Cases of Ebola") +
+  xlab(label = "Time") +
+  ylab(label = "Cum. # of confirmed cases")
+```
+
+@fig-cases2 shows the number of confirmed Ebola death in Guinea, Sierra Leone and Senegal 2014 to 2015.
+
+```{r}
+#| label: fig-cases2
+#| fig-cap: "Ebola deaths confirmed in Guinea, Sierra Leone and Senegal."
+#| fig_width: 8
+#| fig_height: 4
+ggplot(data = data_ebola_cum_cases, 
+               mapping = aes(x = date, y = Cum_conf_death, colour = country)) + 
+  geom_line(mapping = aes(group = country), 
+            alpha = 0.7, linetype = "dashed", linewidth = 1.5) +
+  scale_colour_manual(name = "Country",
+                      breaks = c("Guinea", "Sierra Leone", "Senegal"),
+                      values = c(unibeRedS()[1], unibeOceanS()[1], unibeMustardS()[1]),
+                      labels = c("GIN", "SLE", "SEN" )) +
+  ggtitle(label = "Confirmed Death of Ebola") +
+  xlab(label = "Time") +
+  ylab(label = "Cum. # of confirmed death")
+```
+
+
+## Conclusion
+
+The largest increase in the number of Ebola cases as well as the number of Ebola deaths can be seen in Guinea compared to Sierra Leone and Senegal.
+
